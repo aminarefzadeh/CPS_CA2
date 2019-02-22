@@ -13,17 +13,49 @@
 
 #include <Wire.h>
 
+const int device = 110;
+
+int get_float(int);
+
+void turn_on();
+
 void setup() {
   Wire.begin();        // join i2c bus (address optional for master)
   Serial.begin(9600);  // start serial for output
+  turn_on();
 }
 
 void loop() {
-  Wire.requestFrom(110, 6);    // request 6 bytes from slave device #8
+  double a = get_float(0x0a);
+  double b = get_float(0x28);
+  float x = *(float*)(& a);
+  float y = *(float*)(& b);
+  Serial.print("data is: ");
+  Serial.print(a);
+  Serial.print(", ");
+  Serial.println(x);
+  // Serial.print(send_req(0x0));
+  delay(20);
+}
 
-  while (Wire.available()) { // slave may send less than requested
-    char c = Wire.read(); // receive a byte as character
-    Serial.print(c);         // print the character
+
+int get_float(int base_addr){
+  int i  = 0;
+  int sum = 0;
+  for (i=0;i<4;i++){
+    delay(10);
+    Wire.beginTransmission(device);
+    Wire.write(base_addr+i);
+    Wire.endTransmission();
+    Wire.requestFrom(device, 1);    // request 6 bytes from slave device #8
+    sum = (int)(Wire.read()) + (sum >> 8) ;
   }
+  return sum;
+}
 
-  delay(500)
+void turn_on(){
+  Wire.beginTransmission(device);
+  Wire.write(0x00);
+  Wire.write(0x01);
+  Wire.endTransmission();
+}
