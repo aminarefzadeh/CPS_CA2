@@ -16,10 +16,11 @@ void setup() {
   Serial.begin(9600);
   vSerial.begin(9600);
   sensorSerial.begin(9600);
+  vSerial.println("hello");
 }
 
-  String tempr;
-  String distance; 
+  String tempr = "23";
+  String distance = "40"; 
   float casted_ut_data = 0;
 
 
@@ -34,7 +35,8 @@ void loop() {
     Serial.readBytes(ut_data, 4);
     casted_ut_data = *(reinterpret_cast<float*>(&ut_data));
     // vSerial.println(casted);
-  if(sensorSerial.available())
+  }
+  if(sensorSerial.available()>=9){
     sensor_data =  sensorSerial.readStringUntil('@');
     vSerial.println(sensor_data);
     tempr = sensor_data.substring(0, sensor_data.indexOf('$'));
