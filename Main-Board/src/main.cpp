@@ -5,18 +5,15 @@
 
 
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); // Creates an LCD object. Parameters: (rs, enable, d4, d5, d6, d7)
-
 SoftwareSerial vSerial(12,13);
-AltSoftSerial sensorSerial;
+AltSoftSerial sensorSerial;   // Tx = 9 and Rx = 8
 
 void setup() {
   // put your setup code here, to run once:
   lcd.begin(20,4); // Initializes the interface to the LCD screen, and specifies the dimensions (width and height) of the display
-  lcd.print("hello world");
-  Serial.begin(9600);
-  vSerial.begin(9600);
-  sensorSerial.begin(9600);
-  vSerial.println("hello");
+  Serial.begin(9600);   // serial user for bluetooth
+  vSerial.begin(9600);  // for using virtual terminal and debuging
+  sensorSerial.begin(9600); // used for connecting Sensor and Main board
 }
 
   String tempr = "23";
@@ -25,16 +22,11 @@ void setup() {
 
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // char ut_data_char[4];
-  // float ut_data = *(float*)(&(ut_data_char));
   byte ut_data[4];
-  // byte sensor_data_buff[10];
   String sensor_data;
-  if(Serial.available()){
+  if(Serial.available() >=4){
     Serial.readBytes(ut_data, 4);
-    casted_ut_data = *(reinterpret_cast<float*>(&ut_data));
-    // vSerial.println(casted);
+    casted_ut_data = *(reinterpret_cast<float*>(ut_data));
   }
   if(sensorSerial.available()>=9){
     sensor_data =  sensorSerial.readStringUntil('@');
@@ -45,11 +37,8 @@ void loop() {
     vSerial.println(tempr);
     vSerial.print("distance:");
     vSerial.println(distance);
-    // sensor_data += *(reinterpret_cast<String*>(&sensor_data_buff));
-    // vSerial.println(ut_data);
   }
   
-  // vSerial.println(ut_data);
   lcd.setCursor(0,0); // Sets the location at which subsequent text written to the LCD will be displayed
   lcd.print("Dist: "); // Prints string "Distance" on the LCD
   lcd.print(distance); // Prints the distance value from the sensor
