@@ -18,11 +18,13 @@ void setup() {
 void loop() {
 float Temp = (analogRead(LM35)/1024.0)*500;
 int distance = ultrasonic.read(CM);
-Serial.print("distance is : ");
-Serial.print(distance); // Prints the distance value from the sensor
-Serial.println("");
-Serial.print("temparator is : ");
-Serial.println(Temp);
-delay(1000);
+// Serial.print("distance is : ");
+// Serial.print(distance); // Prints the distance value from the sensor
+// Serial.println("");
+// Serial.print("temparator is : ");
+// Serial.println(Temp);
+String res = String(Temp) + "$" + String(distance) + "@";
+Serial.print(res);
+delay(200);
 
 }
